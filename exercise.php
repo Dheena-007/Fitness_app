@@ -1,8 +1,17 @@
 <?php
-$page_title = 'AI Fitness Trainer';
-require_once __DIR__ . '/config/lang_loader.php'; // For language support
+// --- exercise.php (Final PHP Version) ---
+
+// 1. Load language, session, and database connection
+require_once __DIR__ . '/config/lang_loader.php';
+require_once 'db_connect.php'; 
+
+// 2. Set Page Title
+$page_title = $lang['trainer_page_title'];
+
+// 3. Include the Header
 include 'templates/header.php';
 
+// 4. Security Check
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
@@ -63,6 +72,7 @@ if (!isset($_SESSION['user_id'])) {
         good_press: "<?php echo $lang['js_good_press']; ?>"
     };
 </script>
+
 <script type="module" src="js/exercise.js"></script>
 
 <?php include 'templates/footer.php'; ?>

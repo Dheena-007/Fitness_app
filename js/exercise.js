@@ -1,4 +1,4 @@
-// js/exercise.js (Final Version)
+// js/exercise.js (Final PHP Version)
 
 document.addEventListener('DOMContentLoaded', function() {
     const videoElement = document.getElementById('webcam');
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         camera = new Camera(videoElement, {
             onFrame: async () => {
-                if (videoElement.readyState >= 3) await pose.send({ image: videoElement });
+                if(videoElement.readyState >= 3) await pose.send({ image: videoElement });
             },
             width: 640,
             height: 480
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function analyzeSquat(landmarks) {
         const hip = landmarks[23], knee = landmarks[25], ankle = landmarks[27];
-        if (!hip || !knee || !ankle) return; 
+        if(!hip || !knee || !ankle) return; // Safety check
         const kneeAngle = calculateAngle(hip, knee, ankle);
         if (kneeAngle < 100) stage = "down";
         if (kneeAngle > 160 && stage === 'down') {
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function analyzeBicepCurl(landmarks) {
         const shoulder = landmarks[11], elbow = landmarks[13], wrist = landmarks[15];
-        if (!shoulder || !elbow || !wrist) return;
+        if(!shoulder || !elbow || !wrist) return;
         const elbowAngle = calculateAngle(shoulder, elbow, wrist);
         if (elbowAngle < 40) stage = "up";
         if (elbowAngle > 160 && stage === 'up') {
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function analyzeOverheadPress(landmarks) {
         const shoulder = landmarks[11], elbow = landmarks[13], wrist = landmarks[15];
-        if (!shoulder || !elbow || !wrist) return;
+        if(!shoulder || !elbow || !wrist) return;
         const elbowAngle = calculateAngle(shoulder, elbow, wrist);
         if (elbowAngle > 160 && shoulder.y > elbow.y) stage = "up";
         if (elbowAngle < 90 && stage === 'up') {
@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (results.poseLandmarks) {
             drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, { color: '#2ecc71', lineWidth: 4 });
             drawLandmarks(canvasCtx, results.poseLandmarks, { color: '#e74c3c', lineWidth: 2 });
+            
             try {
                 switch (currentExercise) {
                     case 'squat': analyzeSquat(results.poseLandmarks); break;

@@ -19,7 +19,7 @@ if ($method === 'GET') {
     $log = $result->fetch_assoc();
     echo json_encode($log ? $log : ['glasses' => 0]);
 } elseif ($method === 'POST') {
-    // ஒரு நாளில் முதல் முறை கிளிக் செய்தால் புதிய பதிவை உருவாக்கும், இல்லையெனில் அளவை அதிகரிக்கும்
+    // Inserts a new row or increments the existing row for the day
     $sql = "INSERT INTO daily_water_log (user_id, log_date, glasses) VALUES (?, ?, 1) ON DUPLICATE KEY UPDATE glasses = glasses + 1";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("is", $user_id, $today);

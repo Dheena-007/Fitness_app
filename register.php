@@ -1,5 +1,6 @@
 <?php
-$page_title = 'Register';
+require_once __DIR__ . '/config/lang_loader.php';
+$page_title = $lang['register_title'];
 include 'templates/header.php';
 require_once 'db_connect.php';
 
@@ -33,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="container">
     <div class="card form-card">
-        <h2 style="text-align:center;">Create a New Account</h2>
+        <h2 style="text-align:center;"><?php echo $lang['register_title']; ?></h2>
         <?php if(!empty($message)): ?>
             <div class="alert alert-<?php echo $message_type; ?>"><?php echo $message; ?></div>
         <?php endif; ?>
@@ -50,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Register</button>
+            <button type="submit" class="btn btn-primary btn-block"><?php echo $lang['nav_register']; ?></button>
         </form>
         <p style="text-align:center; margin-top:1rem;">Already have an account? <a href="login.php">Login here</a>.</p>
     </div>

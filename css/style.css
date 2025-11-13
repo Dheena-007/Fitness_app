@@ -1,4 +1,4 @@
-/* --- AI Fitness Platform - Final Main Stylesheet --- */
+/* --- AI Fitness Platform - Final Main Stylesheet (1-Column) --- */
 
 /* --- Google Font & Global Styles --- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -24,19 +24,19 @@ body {
 .container {
     max-width: 960px;
     margin: 2rem auto;
-    padding: 1rem 2rem; /* Added horizontal padding */
+    padding: 1rem 2rem;
 }
 
 .navbar-container {
     background-color: white;
-    padding: 0; /* Removed padding */
+    padding: 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .navbar {
     max-width: 960px;
     margin: auto;
-    padding: 1rem 2rem; /* Added horizontal padding */
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -51,7 +51,7 @@ body {
 
 .navbar .nav-links {
     display: flex;
-    align-items: center; /* Vertically align items */
+    align-items: center;
 }
 
 .navbar .nav-links a {
@@ -68,7 +68,7 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 25px;
-    /* margin-bottom: 20px; Removed margin as gap handles it */
+    /* margin-bottom is handled by grid 'gap' */
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -168,30 +168,19 @@ body {
     color: var(--dark-color);
 }
 
-/* --- UPDATED DASHBOARD LAYOUT --- */
+/* --- UPDATED 1-COLUMN DASHBOARD LAYOUT --- */
 .dashboard-grid {
     display: grid;
     gap: 20px;
-    align-items: start; /* Fixes alignment issue */
+    align-items: start; /* Keeps cards aligned to the top */
     
-    /* 1. Default: 1 column for mobile */
+    /* 1. Force 1-column layout */
     grid-template-columns: 1fr;
-}
-
-/* 2. Medium screens (tablets, 768px and up) */
-@media (min-width: 768px) {
-    .dashboard-grid {
-        /* Switch to 2 columns */
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* 3. Large screens (desktops, 1024px and up) */
-@media (min-width: 1024px) {
-    .dashboard-grid {
-        /* Switch to 3 columns */
-        grid-template-columns: repeat(3, 1fr);
-    }
+    
+    /* 2. Optional: Constrain the width for a cleaner look on wide screens */
+    max-width: 800px; /* You can adjust or remove this value */
+    margin-left: auto;
+    margin-right: auto;
 }
 /* ---------------------------------- */
 

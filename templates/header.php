@@ -1,5 +1,5 @@
 <?php
-// Use __DIR__ to reliably go up one directory and find the config folder.
+// Load language and session
 require_once __DIR__ . '/../config/lang_loader.php';
 ?>
 <!DOCTYPE html>

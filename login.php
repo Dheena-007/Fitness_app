@@ -1,5 +1,6 @@
 <?php
-$page_title = 'Login';
+require_once __DIR__ . '/config/lang_loader.php';
+$page_title = $lang['login_title'];
 include 'templates/header.php';
 require_once 'db_connect.php';
 
@@ -20,18 +21,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            $_SESSION['flash_message'] = "Welcome back, " . htmlspecialchars($user['username']) . "!";
+            $_SESSION['flash_message'] = $lang['dashboard_welcome'] . ", " . htmlspecialchars($user['username']) . "!";
             header("Location: dashboard.php");
             exit();
         }
     }
-    $error = "Invalid email or password.";
+    $error = $lang['error_invalid_credentials'];
 }
+$conn->close();
 ?>
 
 <div class="container">
     <div class="card form-card">
-        <h2 style="text-align:center;">User Login</h2>
+        <h2 style="text-align:center;"><?php echo $lang['login_title']; ?></h2>
         <?php if(!empty($error)): ?>
             <div class="alert alert-danger"><?php echo $error; ?></div>
         <?php endif; ?>
@@ -44,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">Login</button>
+            <button type="submit" class="btn btn-primary btn-block"><?php echo $lang['nav_login']; ?></button>
         </form>
         <p style="text-align:center; margin-top:1rem;">Don't have an account? <a href="register.php">Register here</a>.</p>
     </div>

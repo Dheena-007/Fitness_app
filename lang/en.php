@@ -1,25 +1,18 @@
 <?php
-// lang/en.php - English Language File
+// lang/en.php
 $lang = [
-    // Navigation
     'nav_brand' => 'AI Fitness',
     'nav_dashboard' => 'Dashboard',
     'nav_logout' => 'Logout',
     'nav_login' => 'Login',
     'nav_register' => 'Register',
-
-    // Index Page
     'index_hero_title' => 'Your Personal AI Fitness Coach',
     'index_hero_subtitle' => 'Achieve your health goals with workout and diet plans tailored specifically to you.',
     'index_cta_button' => 'Get Started Now',
     'index_features_title' => 'Why Choose Us?',
-
-    // Login & Register
     'login_title' => 'User Login',
     'register_title' => 'Create a New Account',
     'error_invalid_credentials' => 'Invalid email or password.',
-
-    // Dashboard
     'dashboard_welcome' => 'Welcome',
     'log_metrics_title' => 'Log Your Daily Metrics',
     'weight_progress_title' => 'Your Weight Progress',
@@ -29,8 +22,6 @@ $lang = [
     'trainer_title' => 'AI Trainer',
     'js_error_saving' => 'An error occurred while saving.',
     'js_metrics_saved' => 'Metrics saved successfully.',
-
-    // Exercise Page
     'trainer_page_title' => 'AI Fitness Trainer',
     'trainer_subtitle' => 'Select an exercise, then use your webcam for real-time form feedback.',
     'choose_exercise' => 'Choose an Exercise:',

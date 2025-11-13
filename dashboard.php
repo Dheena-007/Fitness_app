@@ -3,7 +3,7 @@
 
 // 1. Load language, session, and database connection FIRST.
 require_once __DIR__ . '/config/lang_loader.php';
-require_once 'db_connect.php'; // This MUST be loaded before any database queries.
+require_once 'db_connect.php'; // This must be loaded before any database queries.
 
 // 2. Set Page Title (uses $lang variable from loader)
 $page_title = $lang['nav_dashboard'];
@@ -129,11 +129,10 @@ $conn->close(); // Close connection as it's no longer needed on this page
             </form><p id="goalMessage"></p>
         </div>
 
-        <div class="card">
-    <div class="card-header"><i class="fas fa-bullseye icon"></i><h3>Automatic Daily Calorie Goal</h3></div>
-    <div id="autoCalorieGoal" class="stat-value" style="text-align: center;">...</div>
-    <p style="text-align: center;">kcal/day</p>
-</div>
+         <div class="card">
+            <div class="card-header"><i class="fas fa-bullseye icon"></i><h3>Automatic Daily Calorie Goal</h3></div>
+            <div id="autoCalorieGoal" class="stat-value" style="text-align: center;">...</div><p style="text-align: center;">kcal/day</p>
+        </div>
 
         <div class="card">
             <div class="card-header"><i class="fas fa-comment-dots icon"></i><h3>AI Motivational Insight</h3></div>

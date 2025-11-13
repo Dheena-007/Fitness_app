@@ -3,7 +3,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // --- ELEMENT REFERENCES ---
-    // Get all elements needed for the dashboard
     const metricsForm = document.getElementById('metricsForm');
     const formMessage = document.getElementById('formMessage');
     const progressChartCanvas = document.getElementById('progressChart');
@@ -29,21 +28,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let progressChart = null; // Holds the chart instance
 
     // --- UNIVERSAL FETCH FUNCTION ---
-    /**
-     * Fetches data from a URL and returns the JSON response.
-     * @param {string} url - The API endpoint URL (e.g., 'api/metrics.php')
-     * @param {object} options - Optional fetch options (method, body, headers)
-     * @returns {Promise<object>} - A promise that resolves with the JSON data
-     */
     function fetchData(url, options = {}) {
         return fetch(url, options).then(response => {
             if (!response.ok) {
-                // If response is not ok, try to get text error from server
                 return response.text().then(text => { 
                     throw new Error(`Network response was not ok for ${url}. Status: ${response.status}. Response: ${text}`);
                 });
             }
-            // Check if response is JSON, otherwise return empty object
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.indexOf("application/json") !== -1) {
                 return response.json();
@@ -53,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- EVENT LISTENERS (with safety checks) ---
-    // Only add listeners if the elements actually exist on the page
     if (metricsForm) metricsForm.addEventListener('submit', handleMetricsSubmit);
     if (foodLogForm) foodLogForm.addEventListener('submit', handleFoodLogSubmit);
     if (addWaterBtn) addWaterBtn.addEventListener('click', handleWaterLogSubmit);
@@ -63,45 +53,64 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- HANDLER FUNCTIONS ---
     
-    /**
-     * Handles the "Log Your Daily Metrics" form submission.
-     * Saves data and provides an instant AI tip based on BMI.
-     */
-    function handleMetricsSubmit(event) {
-        event.preventDefault();
-        const height = document.getElementById('height').value;
-        const weight = document.getElementById('weight').value;
-        const activity = document.getElementById('activity').value;
+    // ... (உங்கள் dashboard.js கோப்பின் மற்ற செயல்பாடுகளுக்கு இடையில் இதைச் சேர்க்கவும்)
 
-        // Instant client-side AI tip
-        let quickRecommendationText = '';
-        if (height > 0 && weight > 0) {
-            const heightInMeters = height / 100;
-            const bmi = weight / (heightInMeters * heightInMeters);
-            if (bmi < 18.5) { quickRecommendationText = 'AI Tip: Focus on a calorie surplus & strength training.'; }
-            else if (bmi < 25) { quickRecommendationText = 'AI Tip: Focus on maintenance & a balanced fitness routine.'; }
-            else { quickRecommendationText = 'AI Tip: Focus on a calorie deficit & regular cardio.'; }
+/**
+ * "Log Your Daily Metrics" படிவத்தைக் கையாள்கிறது.
+ * இது BMI-ஐக் கணக்கிட்டு, உடனடி AI பரிந்துரையை உருவாக்கி,
+ * பின்னர் தரவைச் சேமிக்க API-ஐ அழைக்கிறது.
+ */
+function handleMetricsSubmit(event) {
+    event.preventDefault(); // பக்கம் Refresh ஆவதைத் தடுக்கிறது
+    
+    const height = document.getElementById('height').value;
+    const weight = document.getElementById('weight').value;
+    const activity = document.getElementById('activity').value;
+
+    // --- இதுதான் நீங்கள் கேட்ட AI கணக்கீடு மற்றும் பரிந்துரை தர்க்கம் ---
+    let quickRecommendationText = '';
+    if (height > 0 && weight > 0) {
+        const heightInMeters = height / 100;
+        const bmi = weight / (heightInMeters * heightInMeters);
+
+        // BMI அடிப்படையில் உணவு மற்றும் உடற்பயிற்சி பரிந்துரையை உருவாக்குகிறது
+        if (bmi < 18.5) {
+            quickRecommendationText = 'AI Tip: Focus on a calorie surplus & strength training.';
+        } else if (bmi < 25) {
+            quickRecommendationText = 'AI Tip: Focus on maintenance & a balanced fitness routine.';
+        } else {
+            quickRecommendationText = 'AI Tip: Focus on a calorie deficit & regular cardio.';
         }
-
-        const payload = { height_cm: height, weight_kg: weight, activity_level: activity };
-        const options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
-
-        fetchData('api/metrics.php', options)
-            .then(data => {
-                formMessage.innerHTML = `${lang_js.metrics_saved}<br><strong style="color: #34495e;">${quickRecommendationText}</strong>`;
-                formMessage.style.color = 'green';
-                loadAllData(); // Refresh all dashboard data
-            })
-            .catch(error => {
-                formMessage.textContent = lang_js.error_saving;
-                formMessage.style.color = 'red';
-                console.error('Error saving metrics:', error);
-            });
     }
+    // -----------------------------------------------------------------
 
-    /**
-     * Handles the "Daily Calorie Tracker" form submission.
-     */
+    const payload = { height_cm: height, weight_kg: weight, activity_level: activity };
+    const options = { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(payload) 
+    };
+
+    // api/metrics.php கோப்பிற்கு தரவை அனுப்புகிறது
+    fetchData('api/metrics.php', options)
+        .then(data => {
+            // வெற்றி பெற்றால், சேமிக்கப்பட்ட செய்தியையும், AI பரிந்துரையையும் காட்டுகிறது
+            formMessage.innerHTML = `${lang_js.metrics_saved}<br><strong style="color: #34495e;">${quickRecommendationText}</strong>`;
+            formMessage.style.color = 'green';
+            
+            // மற்ற எல்லா கார்டுகளையும் Refresh செய்கிறது
+            loadAllData(); 
+        })
+        .catch(error => {
+            // தோல்வியுற்றால், பிழைச் செய்தியைக் காட்டுகிறது
+            formMessage.textContent = lang_js.error_saving;
+            formMessage.style.color = 'red';
+            console.error('Error saving metrics:', error);
+        });
+}
+
+// ... (உங்கள் dashboard.js கோப்பின் மற்ற செயல்பாடுகள், loadAllData() போன்றவை)
+
     function handleFoodLogSubmit(event) {
         event.preventDefault();
         const payload = {
@@ -112,25 +121,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fetchData('api/food_log.php', options)
             .then(() => {
-                updateCalorieTracker(); // Refresh calorie progress bar
-                loadSmartRecommendations(); // Refresh AI recommendations
+                updateCalorieTracker(); 
+                loadSmartRecommendations(); 
                 foodLogForm.reset();
             })
             .catch(error => console.error('Error saving food log:', error));
     }
 
-    /**
-     * Handles the "Add a Glass" button click for water intake.
-     */
     function handleWaterLogSubmit() {
         fetchData('api/water_log.php', { method: 'POST' })
             .then(() => loadWaterLog())
             .catch(error => console.error('Error saving water log:', error));
     }
 
-    /**
-     * Handles the "Calorie Goal Calculator" form submission.
-     */
     function handleCalorieGoalSubmit(e) {
         e.preventDefault();
         const payload = {
@@ -152,9 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error calculating calorie goal:', error));
     }
 
-    /**
-     * Handles the "Set Your Primary Goal" form submission.
-     */
     function handleGoalSubmit(e) {
          e.preventDefault();
          const payload = {
@@ -164,7 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
          };
          const options = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) };
          
-         // This API action also saves Age and Gender
          fetchData('api/predictions.php?action=calculate_calories', options) 
              .then(() => {
                  goalMessage.textContent = "Goal updated successfully!";
@@ -175,9 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
              .catch(error => console.error('Error updating goal:', error));
     }
 
-    /**
-     * Handles the "Recipe Finder" form submission.
-     */
     function handleRecipeSearch(event) {
         event.preventDefault();
         const query = document.getElementById('recipeSearchQuery').value;
@@ -213,169 +209,150 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // --- DATA LOADING AND UI UPDATE FUNCTIONS ---
+    // --- DATA LOADING AND UI UPDATE FUNCTIONS (with safety checks) ---
+    
+    // js/dashboard.js файலில்...
 
-    /**
-     * Updates the calorie progress bar by fetching the AI goal and today's logged food.
-     */
-    function updateCalorieTracker() {
-        if (!foodList || !calorieProgressBar || !calorieProgressText) return; 
-        Promise.all([
-            fetchData('api/predictions.php?action=get_auto_calorie_goal'),
-            fetchData('api/food_log.php')
-        ])
-        .then(([goalData, logData]) => {
-            const calorieGoal = goalData.auto_calorie_goal || 2000;
-            let consumedCalories = 0;
-            foodList.innerHTML = ''; // Clear old list
-            logData.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.food_name} - ${item.calories} kcal`;
-                foodList.appendChild(li);
-                consumedCalories += parseInt(item.calories);
-            });
-            const percentage = calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
-            calorieProgressBar.style.width = `${Math.min(percentage, 100)}%`;
-            calorieProgressText.textContent = `${consumedCalories} / ${calorieGoal} kcal`;
-        }).catch(error => console.error('Error updating calorie tracker:', error));
-    }
+/**
+ * கலோரி டிராக்கரைப் புதுப்பிக்கிறது. இது AI இலக்கைப் பெற்று,
+ * இன்று பதிவுசெய்த உணவுப் பட்டியலைக் காட்டுகிறது.
+ */
+function updateCalorieTracker() {
+    // இரண்டு HTML கூறுகளும் உள்ளனவா எனச் சரிபார்க்கவும்
+    if (!foodList || !calorieProgressBar || !calorieProgressText) return; 
 
-    /**
-     * Loads the 7-day summary data.
-     */
+    // AI இலக்கு மற்றும் உணவுப் பதிவு இரண்டையும் ஒரே நேரத்தில் பெறுகிறது
+    Promise.all([
+        fetchData('api/predictions.php?action=get_auto_calorie_goal'),
+        fetchData('api/food_log.php') // <-- இது உங்கள் உணவுப் பட்டியலைப் பெறுகிறது
+    ])
+    .then(([goalData, logData]) => {
+        const calorieGoal = goalData.auto_calorie_goal || 2000;
+        let consumedCalories = 0;
+
+        // --- இதுதான் உங்கள் பட்டியலை உருவாக்கும் முக்கிய பகுதி ---
+        foodList.innerHTML = ''; // பழைய பட்டியலை அழிக்கிறது
+        
+        // logData (JSON array) இல் உள்ள ஒவ்வொரு பொருளுக்கும் (item) ஒரு லூப் இயங்குகிறது
+        logData.forEach(item => {
+            const li = document.createElement('li'); // ஒரு புதிய <li> தனிமத்தை உருவாக்குகிறது
+            li.textContent = `${item.food_name} - ${item.calories} kcal`; // e.g., "Apple - 2 kcal"
+            foodList.appendChild(li); // அதை பட்டியலின் கீழே சேர்க்கிறது
+            
+            consumedCalories += parseInt(item.calories);
+        });
+        // ------------------------------------------
+
+        // புரோகிரெஸ் பார் மற்றும் மொத்த கலோரிகளைப் புதுப்பிக்கிறது
+        const percentage = calorieGoal > 0 ? (consumedCalories / calorieGoal) * 100 : 0;
+        calorieProgressBar.style.width = `${Math.min(percentage, 100)}%`;
+        calorieProgressText.textContent = `${consumedCalories} / ${calorieGoal} kcal`;
+
+    }).catch(error => console.error('Error updating calorie tracker:', error));
+}
+
+// ... (மற்ற செயல்பாடுகள்) ...
+
+// --- INITIAL DATA LOAD ---
+// பக்கம் ஏற்றப்படும்போது (load) இந்தச் செயல்பாடு அழைக்கப்படுவதை உறுதிப்படுத்தவும்
+updateCalorieTracker();
+
     function loadWeeklySummary() {
-        if (weeklySummaryEl) {
-            fetchData('api/weekly_summary.php').then(data => {
-                let weightChangeText = `${data.weight_change} kg`;
-                let weightChangeClass = '';
-                if (data.weight_change > 0) { weightChangeText = `+${data.weight_change} kg`; weightChangeClass = 'text-danger'; }
-                else if (data.weight_change < 0) { weightChangeClass = 'text-success'; }
-                weeklySummaryEl.innerHTML = `
-                    <ul style="list-style: none; padding: 0; font-size: 1.1rem;">
-                        <li style="margin-bottom: 10px;"><strong>Avg. Daily Calories:</strong> ${data.avg_calories} kcal</li>
-                        <li style="margin-bottom: 10px;"><strong>Avg. Daily Water:</strong> ${data.avg_glasses} glasses</li>
-                        <li style="margin-bottom: 10px;"><strong>Weight Change (7d):</strong> <span class="${weightChangeClass}">${weightChangeText}</span></li>
-                        <li style="margin-bottom: 10px;"><strong>Workouts This Week:</strong> ${data.workout_days} / 7 days</li>
-                    </ul>`;
-            }).catch(error => {
-                weeklySummaryEl.innerHTML = '<p>Could not load summary.</p>';
-                console.error('Error fetching weekly summary:', error);
-            });
-        }
+        if (weeklySummaryEl) fetchData('api/weekly_summary.php').then(data => {
+            let weightChangeText = `${data.weight_change} kg`;
+            let weightChangeClass = '';
+            if (data.weight_change > 0) { weightChangeText = `+${data.weight_change} kg`; weightChangeClass = 'text-danger'; }
+            else if (data.weight_change < 0) { weightChangeClass = 'text-success'; }
+            weeklySummaryEl.innerHTML = `
+                <ul style="list-style: none; padding: 0; font-size: 1.1rem;">
+                    <li style="margin-bottom: 10px;"><strong>Avg. Daily Calories:</strong> ${data.avg_calories} kcal</li>
+                    <li style="margin-bottom: 10px;"><strong>Avg. Daily Water:</strong> ${data.avg_glasses} glasses</li>
+                    <li style="margin-bottom: 10px;"><strong>Weight Change (7d):</strong> <span class="${weightChangeClass}">${weightChangeText}</span></li>
+                    <li style="margin-bottom: 10px;"><strong>Workouts This Week:</strong> ${data.workout_days} / 7 days</li>
+                </ul>`;
+        }).catch(error => {
+            weeklySummaryEl.innerHTML = '<p>Could not load summary.</p>';
+            console.error('Error fetching weekly summary:', error);
+        });
     }
 
-    /**
-     * Fetches weight history and draws the progress chart.
-     */
     function fetchMetricsAndDrawChart() {
-        if (progressChartCanvas) {
-            fetchData('api/metrics.php').then(data => {
-                const labels = data.map(record => new Date(record.recorded_at).toLocaleDateString());
-                const weights = data.map(record => record.weight_kg);
-                drawChart(labels, weights);
-            }).catch(error => console.error('Could not fetch chart data:', error));
-        }
+        if (progressChartCanvas) fetchData('api/metrics.php').then(data => {
+            const labels = data.map(record => new Date(record.recorded_at).toLocaleDateString());
+            const weights = data.map(record => record.weight_kg);
+            drawChart(labels, weights);
+        }).catch(error => console.error('Could not fetch chart data:', error));
     }
 
-    /**
-     * Loads the smart AI recommendations (food & exercise).
-     */
     function loadSmartRecommendations() {
-        if (smartRecommendationsEl) {
-            fetchData('api/smart_recommendations.php').then(data => {
-                if (data.error) {
-                    smartRecommendationsEl.innerHTML = `<p class="alert alert-danger">${data.error}</p>`;
-                    return;
-                }
-                let html = `<h5>Calorie Analysis</h5><p>Goal: ${data.calorie_analysis.goal} | Consumed: ${data.calorie_analysis.consumed} | Remaining: ${data.calorie_analysis.remaining}</p>`;
-                html += `<h5>Food Suggestions</h5>`;
-                if (data.food_suggestions && data.food_suggestions.length > 0) {
-                    html += '<ul>';
-                    data.food_suggestions.forEach(food => html += `<li>${food.recipe_name} (~${food.calories_per_serving} kcal)</li>`);
-                    html += '</ul>';
-                } else {
-                    html += '<p>No food suggestions for your remaining calories.</p>';
-                }
-                html += `<hr><h5>Exercise Plan (Goal: ${data.exercise_plan.focus})</h5><p>${data.exercise_plan.plan}</p>`;
-                smartRecommendationsEl.innerHTML = html;
-            }).catch(error => {
-                smartRecommendationsEl.innerHTML = '<p class="alert alert-danger">Could not load AI analysis.</p>';
-                console.error('Error fetching smart recommendations:', error);
-            });
-        }
+        if (smartRecommendationsEl) fetchData('api/smart_recommendations.php').then(data => {
+            if (data.error) {
+                smartRecommendationsEl.innerHTML = `<p class="alert alert-danger">${data.error}</p>`;
+                return;
+            }
+            let html = `<h5>Calorie Analysis</h5><p>Goal: ${data.calorie_analysis.goal} | Consumed: ${data.calorie_analysis.consumed} | Remaining: ${data.calorie_analysis.remaining}</p>`;
+            html += `<h5>Food Suggestions</h5>`;
+            if (data.food_suggestions && data.food_suggestions.length > 0) {
+                html += '<ul>';
+                data.food_suggestions.forEach(food => html += `<li>${food.recipe_name} (~${food.calories_per_serving} kcal)</li>`);
+                html += '</ul>';
+            } else {
+                html += '<p>No food suggestions for your remaining calories.</p>';
+            }
+            html += `<hr><h5>Exercise Plan (Goal: ${data.exercise_plan.focus})</h5><p>${data.exercise_plan.plan}</p>`;
+            smartRecommendationsEl.innerHTML = html;
+        }).catch(error => {
+            smartRecommendationsEl.innerHTML = '<p class="alert alert-danger">Could not load AI analysis.</p>';
+            console.error('Error fetching smart recommendations:', error);
+        });
     }
 
-    /**
-     * Loads the AI weight prediction.
-     */
     function loadWeightPrediction() {
-        if (predictedWeightEl) {
-            fetchData('api/predictions.php?action=predict_weight').then(data => {
-                if (data.predicted_weight) {
-                    predictedWeightEl.textContent = `${data.predicted_weight} kg`;
-                } else {
-                    predictedWeightEl.textContent = 'Not enough data.';
-                }
-            }).catch(error => {
-                predictedWeightEl.textContent = 'Error.';
-                console.error('Error fetching weight prediction:', error);
-            });
-        }
+        if (predictedWeightEl) fetchData('api/predictions.php?action=predict_weight').then(data => {
+            if (data.predicted_weight) {
+                predictedWeightEl.textContent = `${data.predicted_weight} kg`;
+            } else {
+                predictedWeightEl.textContent = 'Not enough data.';
+            }
+        }).catch(error => {
+            predictedWeightEl.textContent = 'Error.';
+            console.error('Error fetching weight prediction:', error);
+        });
     }
 
-    /**
-     * Loads the current water intake.
-     */
     function loadWaterLog() {
-        if (waterCountEl) {
-            fetchData('api/water_log.php').then(data => { 
-                waterCountEl.textContent = data.glasses || 0; 
-            }).catch(error => console.error('Could not load water log:', error));
-        }
+        if (waterCountEl) fetchData('api/water_log.php').then(data => { 
+            waterCountEl.textContent = data.glasses || 0; 
+        }).catch(error => console.error('Could not load water log:', error));
     }
 
-    /**
-     * Loads the automatic AI calorie goal.
-     */
     function loadAutoCalorieGoal() {
-        if (autoCalorieGoalEl) {
-            fetchData('api/predictions.php?action=get_auto_calorie_goal').then(data => {
-                if (data.auto_calorie_goal) {
-                    autoCalorieGoalEl.textContent = data.auto_calorie_goal;
-                } else {
-                    autoCalorieGoalEl.textContent = 'N/A';
-                    if(data.error) console.error('AutoCalorieGoal Error:', data.error);
-                }
-            }).catch(error => {
-                autoCalorieGoalEl.textContent = 'Error';
-                console.error('Error fetching auto calorie goal:', error);
-            });
-        }
+        if (autoCalorieGoalEl) fetchData('api/predictions.php?action=get_auto_calorie_goal').then(data => {
+            if (data.auto_calorie_goal) {
+                autoCalorieGoalEl.textContent = data.auto_calorie_goal;
+            } else {
+                autoCalorieGoalEl.textContent = 'N/A';
+                if(data.error) console.error('AutoCalorieGoal Error:', data.error);
+            }
+        }).catch(error => {
+            autoCalorieGoalEl.textContent = 'Error';
+            console.error('Error fetching auto calorie goal:', error);
+        });
     }
 
-    /**
-     * Loads the AI motivational insight.
-     */
     function loadAiInsight() {
-        if (aiInsightEl) {
-            fetchData('api/ai_insights.php').then(data => { 
-                aiInsightEl.textContent = data.insight || 'Keep up the great work!'; 
-            }).catch(error => {
-                aiInsightEl.textContent = 'Could not load insight.';
-                console.error('Error fetching AI insight:', error);
-            });
-        }
+        if (aiInsightEl) fetchData('api/ai_insights.php').then(data => { 
+            aiInsightEl.textContent = data.insight || 'Keep up the great work!'; 
+        }).catch(error => {
+            aiInsightEl.textContent = 'Could not load insight.';
+            console.error('Error fetching AI insight:', error);
+        });
     }
 
-    /**
-     * Helper function to draw the Chart.js chart.
-     */
     function drawChart(labels, data) {
         if (!progressChartCanvas) return;
         const ctx = progressChartCanvas.getContext('2d');
-        if (progressChart) {
-            progressChart.destroy(); // Destroy old chart before drawing new one
-        }
+        if (progressChart) progressChart.destroy(); 
         progressChart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -392,9 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    /**
-     * Master function to load all data on page load or refresh.
-     */
     function loadAllData() {
         loadWeeklySummary();
         fetchMetricsAndDrawChart();
@@ -407,11 +381,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- INITIAL DATA LOAD ---
-    // Load all data when the page is ready
     loadAllData();
 
     // --- Pre-fill forms using userProfile from PHP ---
-    // This uses the 'userProfile' constant defined in dashboard.php
     if (typeof userProfile !== 'undefined' && userProfile) {
         if (userProfile.age && document.getElementById('userAge')) {
             document.getElementById('userAge').value = userProfile.age;

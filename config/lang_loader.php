@@ -1,12 +1,14 @@
 <?php
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start(); // Start session if not already started
+}
 
-// Check if the user is requesting a language change
-if (isset($_GET['lang']) && ($_GET['lang'] == 'en' || $_GET['lang'] == 'ta')) {
+// Check for language change request
+if (isset($_GET['lang']) && in_array($_GET['lang'], ['en', 'ta'])) {
     $_SESSION['lang'] = $_GET['lang'];
 }
 
-// Set the language from the session, or default to English
+// Set language from session or default to English
 $current_lang = $_SESSION['lang'] ?? 'en';
 
 // Load the corresponding language file

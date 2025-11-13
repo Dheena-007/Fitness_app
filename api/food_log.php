@@ -1,56 +1,37 @@
 <?php
-// --- api/metrics.php ---
+// --- api/food_log.php ---
 
 header("Content-Type: application/json");
 session_start();
 require_once '../db_connect.php';
 
-if (!isset($_SESSION['user_id'])) {
+// பயனர் உள்நுழைந்துள்ளாரா எனச் சரிபார்க்கவும்
+if (!isset($_SESSION['user_id'])) { 
     http_response_code(401);
-    echo json_encode(['message' => 'User not logged in.']);
-    exit();
+    echo json_encode(['error' => 'User not logged in']);
+    exit; 
 }
 
 $user_id = $_SESSION['user_id'];
+$today = date("Y-m-d"); // இன்றைய தேதியைப் பெறுகிறது
 $method = $_SERVER['REQUEST_METHOD'];
 
-switch ($method) {
-    case 'POST':
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['height_cm'], $data['weight_kg'], $data['activity_level'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'Missing required metric data.']);
-            exit();
-        }
-        $height = $data['height_cm'];
-        $weight = $data['weight_kg'];
-        $activity_level = $data['activity_level'];
-        $height_m = $height / 100;
-        $bmi = ($height_m > 0) ? round($weight / ($height_m * $height_m), 2) : 0;
+if ($method === 'GET') {
+    // **முக்கிய பகுதி: இன்றைய உணவுப் பதிவுகளை மட்டும் தேர்ந்தெடுக்கிறது**
+    $stmt = $conn->prepare("SELECT food_name, calories FROM daily_food_log WHERE user_id = ? AND log_date = ?");
+    $stmt->bind_param("is", $user_id, $today);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $log = $result->fetch_all(MYSQLI_ASSOC);
+    echo json_encode($log); // JSON ஆக அனுப்புகிறது
 
-        $sql = "INSERT INTO user_metrics (user_id, height_cm, weight_kg, bmi, activity_level) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iddds", $user_id, $height, $weight, $bmi, $activity_level);
-        
-        if ($stmt->execute()) {
-            echo json_encode(['message' => 'Metrics saved successfully.']);
-        } else {
-            http_response_code(500);
-            echo json_encode(['message' => 'Failed to save metrics.']);
-        }
-        $stmt->close();
-        break;
-
-    case 'GET':
-        $sql = "SELECT weight_kg, recorded_at FROM user_metrics WHERE user_id = ? ORDER BY recorded_at ASC";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $metrics = $result->fetch_all(MYSQLI_ASSOC);
-        echo json_encode($metrics);
-        $stmt->close();
-        break;
+} elseif ($method === 'POST') {
+    // இது புதிய உணவைச் சேமிக்கும் தர்க்கம்
+    $data = json_decode(file_get_contents('php://input'), true);
+    $stmt = $conn->prepare("INSERT INTO daily_food_log (user_id, food_name, calories, log_date) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isis", $user_id, $data['food_name'], $data['calories'], $today);
+    $stmt->execute();
+    echo json_encode(['status' => 'success']);
 }
 $conn->close();
 ?>

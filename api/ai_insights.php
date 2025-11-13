@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) { exit(json_encode(['insight' => 'Please log i
 $user_id = $_SESSION['user_id'];
 $insight = '';
 
-// 1. கலோரி பதிவில் தொடர்ச்சியைக் கண்டறிதல்
+// 1. Check for calorie logging streak
 $stmt = $conn->prepare("SELECT COUNT(DISTINCT log_date) as streak FROM daily_food_log WHERE user_id = ? AND log_date >= CURDATE() - INTERVAL 3 DAY");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -19,7 +19,7 @@ if ($streak >= 3) {
     $insight = "You've logged your calories for 3 days in a row. Amazing consistency! Keep it up.";
 }
 
-// 2. எடை குறைப்பைக் கண்டறிதல்
+// 2. Check for recent weight loss
 if ($insight == '') {
     $stmt = $conn->prepare("SELECT weight_kg FROM user_metrics WHERE user_id = ? ORDER BY recorded_at DESC LIMIT 2");
     $stmt->bind_param("i", $user_id);
@@ -31,7 +31,7 @@ if ($insight == '') {
     }
 }
 
-// 3. பொதுவான உதவிக்குறிப்பு
+// 3. Generic tip if no other insight is found
 if ($insight == '') {
     $insight = "Staying hydrated is key to success. Have you logged your water intake today?";
 }
