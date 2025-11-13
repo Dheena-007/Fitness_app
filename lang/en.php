@@ -1,0 +1,53 @@
+<?php
+// lang/en.php - English Language File
+$lang = [
+    // Navigation
+    'nav_brand' => 'AI Fitness',
+    'nav_dashboard' => 'Dashboard',
+    'nav_logout' => 'Logout',
+    'nav_login' => 'Login',
+    'nav_register' => 'Register',
+
+    // Index Page
+    'index_hero_title' => 'Your Personal AI Fitness Coach',
+    'index_hero_subtitle' => 'Achieve your health goals with workout and diet plans tailored specifically to you.',
+    'index_cta_button' => 'Get Started Now',
+    'index_features_title' => 'Why Choose Us?',
+
+    // Login & Register
+    'login_title' => 'User Login',
+    'register_title' => 'Create a New Account',
+    'error_invalid_credentials' => 'Invalid email or password.',
+
+    // Dashboard
+    'dashboard_welcome' => 'Welcome',
+    'log_metrics_title' => 'Log Your Daily Metrics',
+    'weight_progress_title' => 'Your Weight Progress',
+    'calorie_tracker_title' => 'Daily Calorie Tracker',
+    'water_intake_title' => 'Water Intake',
+    'recommendations_title' => 'AI Recommendations',
+    'trainer_title' => 'AI Trainer',
+    'js_error_saving' => 'An error occurred while saving.',
+    'js_metrics_saved' => 'Metrics saved successfully.',
+
+    // Exercise Page
+    'trainer_page_title' => 'AI Fitness Trainer',
+    'trainer_subtitle' => 'Select an exercise, then use your webcam for real-time form feedback.',
+    'choose_exercise' => 'Choose an Exercise:',
+    'squats' => 'Squats',
+    'bicep_curls' => 'Bicep Curls (Left Arm)',
+    'overhead_press' => 'Overhead Press (Left Arm)',
+    'start_camera' => 'Start Camera',
+    'stop_camera' => 'Stop Camera',
+    'rep_count' => 'Rep Count',
+    'feedback' => 'Feedback',
+    'js_ready' => 'Ready',
+    'js_loading' => 'Loading model...',
+    'js_go_lower' => 'Go Lower!',
+    'js_great_depth' => 'Great Depth!',
+    'js_lift_higher' => 'Lift Higher!',
+    'js_good_curl' => 'Good Curl!',
+    'js_press_higher' => 'Press Higher!',
+    'js_good_press' => 'Good Press!',
+];
+?>
