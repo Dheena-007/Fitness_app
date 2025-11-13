@@ -1,9 +1,9 @@
 <?php
-// --- api/metrics.php ---
+// --- api/metrics.php (சரிசெய்யப்பட்ட கோட்) ---
 
 header("Content-Type: application/json");
 session_start();
-require_once '../db_connect.php'; // 1. டேட்டாபேஸ் இணைப்பைச் சரிபார்க்கவும்
+require_once '../db_connect.php'; // 1. டேட்டாபேஸ் இணைப்பு உள்ளதா எனச் சரிபார்க்கவும்
 
 // 2. பயனர் உள்நுழைந்துள்ளாரா எனச் சரிபார்க்கவும்
 if (!isset($_SESSION['user_id'])) {
@@ -19,7 +19,7 @@ switch ($method) {
     case 'POST':
         $data = json_decode(file_get_contents('php://input'), true);
         
-        // 3. தரவு சரியாக வருகிறதா எனச் சரிபார்க்கவும்
+        // 3. JS இலிருந்து தரவு சரியாக வருகிறதா எனச் சரிபார்க்கவும்
         if (!isset($data['height_cm'], $data['weight_kg'], $data['activity_level'])) {
             http_response_code(400); // Bad Request
             echo json_encode(['message' => 'Missing required metric data.']);
@@ -37,10 +37,11 @@ switch ($method) {
             $bmi = round($weight / ($height_m * $height_m), 2);
         }
 
+        // 5. உங்கள் டேட்டாபேஸ் டேபிள் மற்றும் நிரல் பெயர்கள் சரியாக உள்ளதா எனச் சரிபார்க்கவும்
         $sql = "INSERT INTO user_metrics (user_id, height_cm, weight_kg, bmi, activity_level) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         
-        // 5. SQL prepare statement தோல்வியடைந்ததா எனச் சரிபார்க்கவும்
+        // 6. SQL query-இல் பிழை உள்ளதா எனச் சரிபார்க்கவும்
         if ($stmt === false) {
              http_response_code(500);
              // உண்மையான MySQL பிழையைக் காட்டுகிறது

@@ -306,3 +306,53 @@ body {
 /* Utility classes */
 .text-success { color: var(--success-color); }
 .text-danger { color: var(--danger-color); }
+/* --- Health Instruction Styles --- */
+.health-instructions {
+    margin-top: 1rem;
+}
+/* The clickable part */
+.health-instructions summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--primary-color);
+    list-style: none; /* Hide the default arrow */
+    display: block;
+}
+/* The animated arrow icon */
+.health-instructions summary::before {
+    content: '\f054'; /* Font Awesome "play" icon */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-right: 8px;
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+}
+/* Rotate the arrow when open */
+.health-instructions[open] summary::before {
+    transform: rotate(90deg);
+}
+/* The content box that appears */
+.health-instructions .instruction-content {
+    font-size: 0.9rem;
+    color: #6c757d;
+    background-color: #f8f9fa; /* A very light gray background */
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-top: 10px;
+    border: 1px solid #e0e0e0;
+}
+/* Style the list inside */
+.health-instructions .instruction-content ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0.5rem;
+}
+.health-instructions .instruction-content li {
+    margin-bottom: 8px;
+}
+.health-instructions .instruction-content li i {
+    margin-right: 10px;
+    color: var(--danger-color); /* Use a warning color */
+    width: 20px;
+    text-align: center;
+}

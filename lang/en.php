@@ -40,5 +40,12 @@ $lang = [
     'js_good_curl' => 'Good Curl!',
     'js_press_higher' => 'Press Higher!',
     'js_good_press' => 'Good Press!',
+    'health_title' => 'Health & Safety Instructions',
+    'health_subtitle' => 'When to avoid exercise:',
+    'health_item_1' => 'If you have a fever or flu-like symptoms.',
+    'health_item_2' => 'If you feel dizzy, nauseous, or have chest pain.',
+    'health_item_3' => 'If you have a serious injury.',
+    'health_item_4' => 'If you are extremely fatigued or haven\'t slept well.',
+    'health_consult' => 'Always consult a doctor if you are unsure.',
 ];
 ?>

@@ -58,20 +58,36 @@ $conn->close(); // Close connection as it's no longer needed on this page
         </div>
 
         <div class="card">
-            <div class="card-header"><i class="fas fa-clipboard-list icon"></i><h3><?php echo $lang['log_metrics_title']; ?></h3></div>
-            <form id="metricsForm">
-                <div class="form-group"><label for="height">Height (cm):</label><input type="number" id="height" required></div>
-                <div class="form-group"><label for="weight">Weight (kg):</label><input type="number" id="weight" step="0.1" required></div>
-                <div class="form-group"><label for="activity">Activity Level:</label>
-                    <select id="activity" required>
-                        <option value="sedentary">Sedentary</option><option value="light">Lightly active</option><option value="moderate">Moderately active</option><option value="active">Active</option><option value="very_active">Very Active</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Metrics</button>
-            </form>
-            <p id="formMessage" style="margin-top: 1rem;"></p>
+    <div class="card-header"><i class="fas fa-clipboard-list icon"></i><h3><?php echo $lang['log_metrics_title']; ?></h3></div>
+    <form id="metricsForm">
+        <div class="form-group"><label for="height">Height (cm):</label><input type="number" id="height" required></div>
+        <div class="form-group"><label for="weight">Weight (kg):</label><input type="number" id="weight" step="0.1" required></div>
+        <div class="form-group"><label for="activity">Activity Level:</label>
+            <select id="activity" required>
+                <option value="sedentary">Sedentary</option><option value="light">Lightly active</option><option value="moderate">Moderately active</option><option value="active">Active</option><option value="very_active">Very Active</option>
+            </select>
         </div>
+        <button type="submit" class="btn btn-primary">Save Metrics</button>
+    </form>
+    <p id="formMessage" style="margin-top: 1rem;"></p>
 
+    <hr>
+    <details class="health-instructions">
+        <summary>
+            <?php echo $lang['health_title']; ?>
+        </summary>
+        <div class="instruction-content">
+            <p><strong><?php echo $lang['health_subtitle']; ?></strong></p>
+            <ul>
+                <li><i class="fas fa-thermometer-half"></i> <?php echo $lang['health_item_1']; ?></li>
+                <li><i class="fas fa-dizzy"></i> <?php echo $lang['health_item_2']; ?></li>
+                <li><i class="fas fa-user-injured"></i> <?php echo $lang['health_item_3']; ?></li>
+                <li><i class="fas fa-bed"></i> <?php echo $lang['health_item_4']; ?></li>
+            </ul>
+            <p style="margin-bottom: 0;"><em><?php echo $lang['health_consult']; ?></em></p>
+        </div>
+    </details>
+    </div>
         <div class="card">
             <div class="card-header"><i class="fas fa-chart-line icon"></i><h3><?php echo $lang['weight_progress_title']; ?></h3></div>
             <canvas id="progressChart"></canvas>
